@@ -18,6 +18,7 @@ export type PushNotification = {
 }
 
 export type State = {
+  linkToSettings: boolean,
   token: string,
   tokenType: ?TokenType,
   permissionsRequesting: boolean,

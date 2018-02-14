@@ -10,11 +10,13 @@ import {chatTab} from '../constants/tabs'
 import {switchTo} from './route-tree'
 import {createShowUserProfile} from './profile-gen'
 import {
+  openAppSettings,
   requestPushPermissions,
   configurePush,
   displayNewMessageNotification,
   clearAllNotifications,
   setNoPushPermissions,
+  setYesPushPermissions,
 } from './platform-specific'
 
 import type {TypedState} from '../constants/reducer'
@@ -32,11 +34,19 @@ function permissionsNoSaga() {
 
 function* permissionsRequestSaga(): Saga.SagaGenerator<any, any> {
   try {
+    const state: TypedState = yield Saga.select()
+    const {linkToSettings} = state.push
+    if (linkToSettings) {
+      openAppSettings()
+    }
     yield Saga.put(PushGen.createPermissionsRequesting({requesting: true}))
 
     logger.info('Requesting permissions')
     const permissions = yield Saga.call(requestPushPermissions)
     logger.info('Permissions:', permissions)
+    if (permissions.alert || permissions.badge) {
+      yield Saga.call(setYesPushPermissions)
+    }
     // TODO(gabriel): Set permissions we have in store, might want it at some point?
   } finally {
     yield Saga.put(PushGen.createPermissionsRequesting({requesting: false}))

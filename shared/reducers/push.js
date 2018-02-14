@@ -26,6 +26,12 @@ function reducer(state: Types.State = Constants.initialState, action: PushGen.Ac
         token,
         tokenType,
       }
+    case PushGen.linkToSettings:
+      const {linkToSettings} = action.payload
+      return {
+        ...state,
+        linkToSettings,
+      }
     // Saga only actions
     case PushGen.configurePush:
     case PushGen.error:

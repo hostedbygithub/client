@@ -10,13 +10,32 @@ import {isDevApplePushToken} from '../local-debug'
 import {isIOS} from '../constants/platform'
 import {isImageFileName} from '../constants/chat'
 
+const allowPush = 'allowPush'
+const shownPushPrompt = 'shownPushPrompt'
+
 function requestPushPermissions(): Promise<*> {
   return PushNotifications.requestPermissions()
 }
 
 function setNoPushPermissions(): Promise<*> {
   return new Promise((resolve, reject) => {
-    AsyncStorage.setItem('allowPush', 'false', e => {
+    AsyncStorage.setItem(allowPush, 'false', e => {
+      resolve()
+    })
+  })
+}
+
+function setYesPushPermissions(): Promise<*> {
+  return new Promise((resolve, reject) => {
+    AsyncStorage.setItem(allowPush, 'true', e => {
+      resolve()
+    })
+  })
+}
+
+function setShownPushPrompt(): Promise<*> {
+  return new Promise((resolve, reject) => {
+    AsyncStorage.setItem(shownPushPrompt, 'true', e => {
       resolve()
     })
   })
@@ -94,8 +113,10 @@ function configurePush() {
   return eventChannel(dispatch => {
     PushNotifications.configure({
       onRegister: token => {
-        console.log('GOT PUSH TOKEN: ', token)
-        PushNotifications.checkPermissions(perm => console.log('TOKEN PERMISSIONS: ', perm))
+        /**
+         * THIS FCN NEEDS TO GO
+         */
+        setShownPushPrompt().then()
         let tokenType: ?PushTypes.TokenType
         switch (token.os) {
           case 'ios':
@@ -164,7 +185,10 @@ function configurePush() {
 
     logger.debug('Check push permissions')
     if (isIOS) {
-      AsyncStorage.getItem('allowPush', (error, result) => {
+      /**
+       * THIS BLOCK NEEDS TO GO
+       */
+      AsyncStorage.getItem(allowPush, (error, result) => {
         if (error || result !== 'false') {
           PushNotifications.checkPermissions(permissions => {
             logger.debug('Push checked permissions:', permissions)
@@ -183,6 +207,13 @@ function configurePush() {
               dispatch(PushGen.createPermissionsRequest())
             }
           })
+        } else if (result === 'false') {
+          dispatch(PushGen.createLinkToSettings({linkToSettings: true}))
+          dispatch(
+            PushGen.createPermissionsPrompt({
+              prompt: true,
+            })
+          )
         }
       })
     }
@@ -206,6 +237,8 @@ export {
   configurePush,
   saveAttachmentDialog,
   setNoPushPermissions,
+  setYesPushPermissions,
+  setShownPushPrompt,
   showShareActionSheet,
   clearAllNotifications,
 }

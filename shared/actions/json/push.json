@@ -4,6 +4,9 @@
   ],
   "actions": {
     "configurePush": {},
+    "linkToSettings": {
+      "linkToSettings": "boolean"
+    },
     "permissionsNo": {},
     "permissionsRequest": {},
     "permissionsRequesting": {

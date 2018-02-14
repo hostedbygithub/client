@@ -8,6 +8,7 @@ export const tokenTypeAndroidPlay: Types.TokenType = 'androidplay'
 export const androidSenderID = '9603251415'
 
 export const initialState: Types.State = {
+  linkToSettings: false,
   permissionsPrompt: false,
   permissionsRequesting: false,
   tokenType: null,
