@@ -4,7 +4,7 @@ import * as PushTypes from '../constants/types/push'
 import * as PushConstants from '../constants/push'
 import * as PushGen from './push-gen'
 import * as PushNotifications from 'react-native-push-notification'
-import {PushNotificationIOS, CameraRoll, ActionSheetIOS, AsyncStorage} from 'react-native'
+import {PushNotificationIOS, CameraRoll, ActionSheetIOS, AsyncStorage, Linking} from 'react-native'
 import {eventChannel} from 'redux-saga'
 import {isDevApplePushToken} from '../local-debug'
 import {isIOS} from '../constants/platform'
@@ -94,6 +94,8 @@ function configurePush() {
   return eventChannel(dispatch => {
     PushNotifications.configure({
       onRegister: token => {
+        console.log('GOT PUSH TOKEN: ', token)
+        PushNotifications.checkPermissions(perm => console.log('TOKEN PERMISSIONS: ', perm))
         let tokenType: ?PushTypes.TokenType
         switch (token.os) {
           case 'ios':
@@ -190,7 +192,12 @@ function configurePush() {
   })
 }
 
+function openAppSettings() {
+  Linking.openURL('app-settings:')
+}
+
 export {
+  openAppSettings,
   displayNewMessageNotification,
   getAppState,
   setAppState,

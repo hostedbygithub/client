@@ -52,7 +52,12 @@ function clearAllNotifications() {
   throw new Error('Clear all notifications not available on this platform')
 }
 
+function openAppSettings() {
+  throw new Error(`openAppSettings can't be called on desktop!`)
+}
+
 export {
+  openAppSettings,
   requestPushPermissions,
   showMainWindow,
   configurePush,

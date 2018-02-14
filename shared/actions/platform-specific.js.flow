@@ -1,4 +1,5 @@
 // @flow
+declare export function openAppSettings(): void
 declare export function setNoPushPermissions(): Promise<*>
 declare export function requestPushPermissions(): Promise<*>
 declare export function configurePush(): void
